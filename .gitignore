@@ -9,4 +9,6 @@
 # Zeppelin ignored files
 /ZeppelinRemoteNotebooks/
 .idea
+.DS_Store
+
 
