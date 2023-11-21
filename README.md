@@ -40,7 +40,6 @@ cdk bootstrap
 ```
 5. Deploy the sample
 ```cdk deploy```
-6. Go to **[AWS CloudFormation](https://console.aws.amazon.com/cloudformation/)**
 
 ### Access Amazon EMR Primary Node
 
