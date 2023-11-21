@@ -22,11 +22,25 @@ The Cloudformation Template deploys the following:
 
 ## Getting Started
 
-1. Go to **[AWS CloudFormation](https://console.aws.amazon.com/cloudformation/)**
-2. Click **Create stack**
-3. Upload template from repo *emr-spark-kinesis-sample-template.json*
-4. Give the stack a name: ((Ex. *emr-spark-kinesis-sample-stack*)
-5. Deploy stack (Wait a few minutes for it to be launched)
+1. Git Clone this repository
+``` 
+git clone <repository>
+```
+2. Naviate into the directory
+```
+cd spark-kinesis-connector-emr-sample/cdk
+```
+3. Download and install the necessary npm modules
+```
+npm install
+```
+4. Bootstrap the CDK Application
+```
+cdk bootstrap
+```
+5. Deploy the sample
+```cdk deploy```
+6. Go to **[AWS CloudFormation](https://console.aws.amazon.com/cloudformation/)**
 
 ### Access Amazon EMR Primary Node
 
