@@ -1,0 +1,1476 @@
+{
+ "Description": "This template creates an Amazon Cognito User Pool and Identity Pool, with a single user.  It assigns a role to authenticated users in the identity pool to enable the users to use the Kinesis Data Generator tool.",
+ "AWSTemplateFormatVersion": "2010-09-09",
+ "Metadata": {
+  "AWS::CloudFormation::Interface": {
+   "ParameterGroups": [
+    {
+     "Label": {
+      "default": "Cognito User for Kinesis Data Generator"
+     },
+     "Parameters": [
+      "Username",
+      "Password"
+     ]
+    }
+   ]
+  }
+ },
+ "Resources": {
+  "VPCB9E5F0B4": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/Resource"
+   }
+  },
+  "VPCpublicsubnet1Subnet1Subnet39B927A0": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public-subnet-1"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1/Subnet"
+   }
+  },
+  "VPCpublicsubnet1Subnet1RouteTable1127E157": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1/RouteTable"
+   }
+  },
+  "VPCpublicsubnet1Subnet1RouteTableAssociation99DE76A6": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VPCpublicsubnet1Subnet1RouteTable1127E157"
+    },
+    "SubnetId": {
+     "Ref": "VPCpublicsubnet1Subnet1Subnet39B927A0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1/RouteTableAssociation"
+   }
+  },
+  "VPCpublicsubnet1Subnet1DefaultRouteEFD0DA69": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "VPCIGWB7E252D3"
+    },
+    "RouteTableId": {
+     "Ref": "VPCpublicsubnet1Subnet1RouteTable1127E157"
+    }
+   },
+   "DependsOn": [
+    "VPCVPCGW99B986DC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1/DefaultRoute"
+   }
+  },
+  "VPCpublicsubnet1Subnet1EIP36DFE85A": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1/EIP"
+   }
+  },
+  "VPCpublicsubnet1Subnet1NATGatewayB023E80E": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "VPCpublicsubnet1Subnet1EIP36DFE85A",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "VPCpublicsubnet1Subnet1Subnet39B927A0"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1"
+     }
+    ]
+   },
+   "DependsOn": [
+    "VPCpublicsubnet1Subnet1DefaultRouteEFD0DA69",
+    "VPCpublicsubnet1Subnet1RouteTableAssociation99DE76A6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet1/NATGateway"
+   }
+  },
+  "VPCpublicsubnet1Subnet2Subnet1B74FFEC": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public-subnet-1"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet2/Subnet"
+   }
+  },
+  "VPCpublicsubnet1Subnet2RouteTable6613D6DE": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet2/RouteTable"
+   }
+  },
+  "VPCpublicsubnet1Subnet2RouteTableAssociation4859253B": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VPCpublicsubnet1Subnet2RouteTable6613D6DE"
+    },
+    "SubnetId": {
+     "Ref": "VPCpublicsubnet1Subnet2Subnet1B74FFEC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet2/RouteTableAssociation"
+   }
+  },
+  "VPCpublicsubnet1Subnet2DefaultRoute3D53F956": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "VPCIGWB7E252D3"
+    },
+    "RouteTableId": {
+     "Ref": "VPCpublicsubnet1Subnet2RouteTable6613D6DE"
+    }
+   },
+   "DependsOn": [
+    "VPCVPCGW99B986DC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/public-subnet-1Subnet2/DefaultRoute"
+   }
+  },
+  "VPCprivatesubnetSubnet1SubnetAADEED5B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.2.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-subnet"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/private-subnetSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet1/Subnet"
+   }
+  },
+  "VPCprivatesubnetSubnet1RouteTable176056E4": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/private-subnetSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet1/RouteTable"
+   }
+  },
+  "VPCprivatesubnetSubnet1RouteTableAssociationA677CAD4": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VPCprivatesubnetSubnet1RouteTable176056E4"
+    },
+    "SubnetId": {
+     "Ref": "VPCprivatesubnetSubnet1SubnetAADEED5B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet1/RouteTableAssociation"
+   }
+  },
+  "VPCprivatesubnetSubnet1DefaultRoute0603171C": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "VPCpublicsubnet1Subnet1NATGatewayB023E80E"
+    },
+    "RouteTableId": {
+     "Ref": "VPCprivatesubnetSubnet1RouteTable176056E4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet1/DefaultRoute"
+   }
+  },
+  "VPCprivatesubnetSubnet2SubnetA79F0BC2": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-subnet"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/private-subnetSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet2/Subnet"
+   }
+  },
+  "VPCprivatesubnetSubnet2RouteTable413DF6EE": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC/private-subnetSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet2/RouteTable"
+   }
+  },
+  "VPCprivatesubnetSubnet2RouteTableAssociation5DC23903": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VPCprivatesubnetSubnet2RouteTable413DF6EE"
+    },
+    "SubnetId": {
+     "Ref": "VPCprivatesubnetSubnet2SubnetA79F0BC2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet2/RouteTableAssociation"
+   }
+  },
+  "VPCprivatesubnetSubnet2DefaultRoute556E8855": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "VPCpublicsubnet1Subnet1NATGatewayB023E80E"
+    },
+    "RouteTableId": {
+     "Ref": "VPCprivatesubnetSubnet2RouteTable413DF6EE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/private-subnetSubnet2/DefaultRoute"
+   }
+  },
+  "VPCIGWB7E252D3": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "EmrSparkKinesisStack/VPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/IGW"
+   }
+  },
+  "VPCVPCGW99B986DC": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "VPCIGWB7E252D3"
+    },
+    "VpcId": {
+     "Ref": "VPCB9E5F0B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/VPCGW"
+   }
+  },
+  "VPCRestrictDefaultSecurityGroupCustomResource59474679": {
+   "Type": "Custom::VpcRestrictDefaultSG",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+      "Arn"
+     ]
+    },
+    "DefaultSecurityGroupId": {
+     "Fn::GetAtt": [
+      "VPCB9E5F0B4",
+      "DefaultSecurityGroup"
+     ]
+    },
+    "Account": {
+     "Ref": "AWS::AccountId"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/VPC/RestrictDefaultSecurityGroupCustomResource/Default"
+   }
+  },
+  "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ],
+    "Policies": [
+     {
+      "PolicyName": "Inline",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupEgress"
+         ],
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":ec2:",
+             {
+              "Ref": "AWS::Region"
+             },
+             ":",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":security-group/",
+             {
+              "Fn::GetAtt": [
+               "VPCB9E5F0B4",
+               "DefaultSecurityGroup"
+              ]
+             }
+            ]
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Role"
+   }
+  },
+  "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "7f18a11296f35510ee16538afec983ed6312e12afbf81b777089a9f8e34e2474.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "__entrypoint__.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Description": "Lambda function for removing all inbound/outbound rules from the VPC default security group"
+   },
+   "DependsOn": [
+    "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.7f18a11296f35510ee16538afec983ed6312e12afbf81b777089a9f8e34e2474",
+    "aws:asset:property": "Code"
+   }
+  },
+  "KinesisDataGeneratorSecret": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "Secret for the Cognito User for the Kinesis Data Generator",
+    "Name": "KinesisDataGeneratorUser",
+    "SecretString": {
+     "Fn::Sub": "{ \"username\": \"kinesis\", \"password\": \"Kinesis123\" }"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "StagingS3Bucket": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    }
+   }
+  },
+  "StagingLambdaRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Service": [
+         "lambda.amazonaws.com"
+        ]
+       },
+       "Action": [
+        "sts:AssumeRole"
+       ]
+      }
+     ]
+    },
+    "Path": "/",
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+         ],
+         "Resource": [
+          {
+           "Fn::Sub": "arn:${AWS::Partition}:logs:*:*:log-group:/aws/lambda/bootstrapStagingLambdaSetup*"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "s3:PutObject"
+         ],
+         "Resource": [
+          {
+           "Fn::Sub": "${StagingS3Bucket.Arn}/*"
+          }
+         ]
+        }
+       ]
+      },
+      "PolicyName": "BootStrapLambdaSetup"
+     }
+    ]
+   }
+  },
+  "StagingLambdaFunc": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "import json\nimport urllib3\nimport boto3\nimport cfnresponse\nimport hashlib\nimport time\n\ndef stage_resources(event, context):\n  \n    #if True:  # Testing hook to be able to stage out of band ZIP files\n    #  time.sleep(50)  # Watch timeout setting + Initialization\n    #  return\n  \n    http = urllib3.PoolManager()\n    rsc_props = event['ResourceProperties']\n\n    bucket = rsc_props['StagingS3BucketName']\n    url_to_fetch = rsc_props['UrlLambdaZipToStage']\n    filename_key = rsc_props['FilenameKey']\n    expected_sha = rsc_props['Expected512Sha']\n\n    print(f'About to fetch URL: {url_to_fetch}')\n    resp = http.request('GET', url_to_fetch)\n    \n    m = hashlib.sha512()\n    m.update(resp.data)\n    \n    if expected_sha != m.hexdigest():\n      raise RunTimeError(f'downloaded checksum does not match baseline. Expected[{expected_sha}], Got[{m.hexgistest()}]')\n\n    print(f'About to put file to S3: {bucket}/{filename_key}')\n    s3 = boto3.client('s3')\n    resp = s3.put_object(\n        Bucket=bucket,\n        Key=filename_key,\n        Body=resp.data,\n    )\n\ndef handler(event, context):\n    print(json.dumps(event))\n    was_i_successful = cfnresponse.FAILED\n    try:\n        if event['RequestType'] == 'Create':\n            print('creating')\n            stage_resources(event, context)\n        elif event['RequestType'] == 'Update':\n            pass\n        elif event['RequestType'] == 'Delete':\n            pass\n\n        was_i_successful = cfnresponse.SUCCESS\n    except Exception as e:\n        print('exception thrown')\n        print(e)\n\n    print(f'CFN Response: {was_i_successful}')\n    cfnresponse.send(event, context, was_i_successful, {})\n"
+    },
+    "Description": "Staging Lambda to pull the zip dependency from GitHub to build the \"real\" setup function",
+    "FunctionName": "bootstrapStagingLambdaSetup",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": "StagingLambdaRole.Arn"
+    },
+    "Runtime": "python3.9",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "StagingS3Bucket"
+   ]
+  },
+  "ExecuteBootstrapStagingLambdaFuncCustom": {
+   "Type": "Custom::BootstrapStagingLambdaFunc",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": "StagingLambdaFunc.Arn"
+    },
+    "StagingS3BucketName": {
+     "Ref": "StagingS3Bucket"
+    },
+    "UrlLambdaZipToStage": "https://github.com/awslabs/amazon-kinesis-data-generator/blob/mainline/setup/datagen-cognito-setup.zip?raw=true",
+    "FilenameKey": "datagen-cognito-setup.zip",
+    "Expected512Sha": "bbe80f52ec7a246c065069f2bb0112a1a968472e6b48946ab88d73e5284787cd56acbd1d7adaa07a8120f3e1bd8d6644b96d18d7f0d7a2e60013d77b00d07eaa"
+   }
+  },
+  "AuthenticatedUserRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Federated": [
+         {
+          "Fn::FindInMap": [
+           "PrincipalMap",
+           {
+            "Ref": "AWS::Partition"
+           },
+           "cognito"
+          ]
+         }
+        ]
+       },
+       "Action": [
+        "sts:AssumeRoleWithWebIdentity"
+       ]
+      }
+     ]
+    },
+    "Path": "/",
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Action": [
+          "kinesis:DescribeStream",
+          "kinesis:PutRecord",
+          "kinesis:PutRecords"
+         ],
+         "Resource": [
+          {
+           "Fn::Sub": "arn:${AWS::Partition}:kinesis:*:*:stream/*"
+          }
+         ],
+         "Effect": "Allow"
+        },
+        {
+         "Action": [
+          "firehose:DescribeDeliveryStream",
+          "firehose:PutRecord",
+          "firehose:PutRecordBatch"
+         ],
+         "Resource": [
+          {
+           "Fn::Sub": "arn:${AWS::Partition}:firehose:*:*:deliverystream/*"
+          }
+         ],
+         "Effect": "Allow"
+        },
+        {
+         "Action": [
+          "ec2:DescribeRegions",
+          "firehose:ListDeliveryStreams",
+          "kinesis:ListStreams"
+         ],
+         "Resource": [
+          "*"
+         ],
+         "Effect": "Allow"
+        }
+       ]
+      },
+      "PolicyName": "AllowStreaming"
+     }
+    ]
+   }
+  },
+  "UnauthenticatedUserRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Federated": [
+         {
+          "Fn::FindInMap": [
+           "PrincipalMap",
+           {
+            "Ref": "AWS::Partition"
+           },
+           "cognito"
+          ]
+         }
+        ]
+       },
+       "Action": [
+        "sts:AssumeRoleWithWebIdentity"
+       ]
+      }
+     ]
+    },
+    "Path": "/",
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Deny",
+         "Action": [
+          "*"
+         ],
+         "Resource": [
+          "*"
+         ]
+        }
+       ]
+      },
+      "PolicyName": "DenyAll"
+     }
+    ]
+   }
+  },
+  "SetupLambdaExecutionRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Service": [
+         "lambda.amazonaws.com"
+        ]
+       },
+       "Action": [
+        "sts:AssumeRole"
+       ]
+      }
+     ]
+    },
+    "Path": "/",
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+         ],
+         "Resource": [
+          {
+           "Fn::Sub": "arn:${AWS::Partition}:logs:*:*:log-group:/aws/lambda/KinesisDataGeneratorCognitoSetup*"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "cognito-idp:AdminConfirmSignUp",
+          "cognito-idp:CreateUserPoolClient",
+          "cognito-idp:AdminCreateUser"
+         ],
+         "Resource": [
+          {
+           "Fn::Sub": "arn:${AWS::Partition}:cognito-idp:*:*:userpool/*"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "cognito-idp:CreateUserPool",
+          "cognito-identity:CreateIdentityPool",
+          "cognito-identity:SetIdentityPoolRoles"
+         ],
+         "Resource": "*"
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "iam:UpdateAssumeRolePolicy"
+         ],
+         "Resource": [
+          {
+           "Fn::GetAtt": "AuthenticatedUserRole.Arn"
+          },
+          {
+           "Fn::GetAtt": "UnauthenticatedUserRole.Arn"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "iam:PassRole"
+         ],
+         "Resource": [
+          {
+           "Fn::GetAtt": "AuthenticatedUserRole.Arn"
+          },
+          {
+           "Fn::GetAtt": "UnauthenticatedUserRole.Arn"
+          }
+         ]
+        }
+       ]
+      },
+      "PolicyName": "SetupCognitoLambda"
+     }
+    ]
+   }
+  },
+  "DataGenCognitoSetupLambdaFunc": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Ref": "StagingS3Bucket"
+     },
+     "S3Key": "datagen-cognito-setup.zip"
+    },
+    "Description": "Creates a Cognito User Pool, Identity Pool, and a User.  Returns IDs to be used in the Kinesis Data Generator.",
+    "FunctionName": "KinesisDataGeneratorCognitoSetup",
+    "Handler": "createCognitoPool.createPoolAndUser",
+    "Role": {
+     "Fn::GetAtt": "SetupLambdaExecutionRole.Arn"
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 120
+   },
+   "DependsOn": [
+    "ExecuteBootstrapStagingLambdaFuncCustom"
+   ]
+  },
+  "SetupCognitoCustom": {
+   "Type": "Custom::DataGenCognitoSetupLambdaFunc",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": "DataGenCognitoSetupLambdaFunc.Arn"
+    },
+    "Region": {
+     "Ref": "AWS::Region"
+    },
+    "Username": "kinesis",
+    "Password": "Kinesis123",
+    "AuthRoleName": {
+     "Ref": "AuthenticatedUserRole"
+    },
+    "AuthRoleArn": {
+     "Fn::GetAtt": "AuthenticatedUserRole.Arn"
+    },
+    "UnauthRoleName": {
+     "Ref": "UnauthenticatedUserRole"
+    },
+    "UnauthRoleArn": {
+     "Fn::GetAtt": "UnauthenticatedUserRole.Arn"
+    },
+    "Partition": {
+     "Ref": "AWS::Partition"
+    }
+   }
+  },
+  "EMRServiceRoleB3B23D7F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "elasticmapreduce.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonElasticMapReduceRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/EMR Service Role/Resource"
+   }
+  },
+  "EMRJobFlowRoleC9EE020B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonS3FullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AWSGlueConsoleFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonKinesisFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedEC2InstanceDefaultPolicy"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/CloudWatchFullAccess"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/EMR Job Flow Role/Resource"
+   }
+  },
+  "EMRInstanceProfile": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "InstanceProfileName": "emr-instance-profile-spark-kinesis",
+    "Roles": [
+     {
+      "Ref": "EMRJobFlowRoleC9EE020B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/EMR InstanceProfile"
+   }
+  },
+  "EMRSparkCluster": {
+   "Type": "AWS::EMR::Cluster",
+   "Properties": {
+    "Applications": [
+     {
+      "Name": "Spark"
+     },
+     {
+      "Name": "Hive"
+     },
+     {
+      "Name": "Hadoop"
+     }
+    ],
+    "Instances": {
+     "CoreInstanceGroup": {
+      "InstanceCount": 1,
+      "InstanceType": "m5.xlarge"
+     },
+     "Ec2SubnetId": {
+      "Ref": "VPCpublicsubnet1Subnet1Subnet39B927A0"
+     },
+     "MasterInstanceGroup": {
+      "InstanceCount": 1,
+      "InstanceType": "m5.xlarge"
+     }
+    },
+    "JobFlowRole": "emr-instance-profile-spark-kinesis",
+    "Name": "emr-spark-kinesis",
+    "ReleaseLabel": "emr-6.14.0",
+    "ServiceRole": {
+     "Ref": "EMRServiceRoleB3B23D7F"
+    },
+    "Steps": [
+     {
+      "ActionOnFailure": "CONTINUE",
+      "HadoopJarStep": {
+       "Args": [
+        "bash",
+        "-c",
+        "wget https://data-streaming-labs.s3.amazonaws.com/emr-spark-kinesis-sample/spark-kinesis.sh; sh spark-kinesis.sh"
+       ],
+       "Jar": "command-runner.jar"
+      },
+      "Name": "kinesis-connector-setup"
+     }
+    ]
+   },
+   "DependsOn": [
+    "EMRInstanceProfile",
+    "EMRJobFlowRoleC9EE020B",
+    "EMRServiceRoleB3B23D7F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/EMR Spark Cluster"
+   }
+  },
+  "KinesisSparkSourceStream748D4059": {
+   "Type": "AWS::Kinesis::Stream",
+   "Properties": {
+    "Name": "kinesis-source",
+    "RetentionPeriodHours": 24,
+    "StreamEncryption": {
+     "Fn::If": [
+      "AwsCdkKinesisEncryptedStreamsUnsupportedRegions",
+      {
+       "Ref": "AWS::NoValue"
+      },
+      {
+       "EncryptionType": "KMS",
+       "KeyId": "alias/aws/kinesis"
+      }
+     ]
+    },
+    "StreamModeDetails": {
+     "StreamMode": "ON_DEMAND"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/Kinesis Spark Source Stream/Resource"
+   }
+  },
+  "KinesisSparkSinkStreamFA5A79F9": {
+   "Type": "AWS::Kinesis::Stream",
+   "Properties": {
+    "Name": "kinesis-sink",
+    "RetentionPeriodHours": 24,
+    "StreamEncryption": {
+     "Fn::If": [
+      "AwsCdkKinesisEncryptedStreamsUnsupportedRegions",
+      {
+       "Ref": "AWS::NoValue"
+      },
+      {
+       "EncryptionType": "KMS",
+       "KeyId": "alias/aws/kinesis"
+      }
+     ]
+    },
+    "StreamModeDetails": {
+     "StreamMode": "ON_DEMAND"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/Kinesis Spark Sink Stream/Resource"
+   }
+  },
+  "MyCfnStreamConsumer": {
+   "Type": "AWS::Kinesis::StreamConsumer",
+   "Properties": {
+    "ConsumerName": "efo-consumer",
+    "StreamARN": {
+     "Fn::GetAtt": [
+      "KinesisSparkSourceStream748D4059",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/MyCfnStreamConsumer"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22Ry07DMBBFv4W9a9qwYVsqQF0AUYu6rSbOtEzjR+RHKxTl3xm7QCTEJr5zPY/jSSUX80rOb+ASZqrtZpoaOWwjqE6wtR9QVXLY9UqsDnZXr0SdGk1qmxqLMXuT2rgU8R0ajZM/ecsQnCKI5OxvchaP6zofrxCfIeIFPkXt6cxyary2ET3rn4QryXe0jMz6YdDGUQRUHmMwYOGIXmaK4ohwl4OHpDoOCIwcCgKTlk+ZESJYhbV3B9I4Cg2maSGXPSWrCjaa0nOlU2Ag0ZHFQCFvyyOY8ug/auVsSAb9OIoNBpe84mFc7cwUMsj/V4xyppYH8eow8i85kj0KpV1qD86bsso9WaVTi7I8ocjc8QX6PiezfEuxT2WNDNNSLhqFdVxyCrfnai7v5eLmFIhmPtlIBuXmen4BuNND4RkCAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "EmrSparkKinesisStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Mappings": {
+  "PrincipalMap": {
+   "aws-us-gov": {
+    "cognito": "cognito-identity-us-gov.amazonaws.com"
+   },
+   "aws": {
+    "cognito": "cognito-identity.amazonaws.com"
+   }
+  }
+ },
+ "Outputs": {
+  "KinesisDataGeneratorUrl": {
+   "Description": "The URL for your Kinesis Data Generator.",
+   "Value": {
+    "Fn::Sub": "https://awslabs.github.io/amazon-kinesis-data-generator/web/producer.html?${SetupCognitoCustom.Querystring}"
+   }
+  },
+  "KinesisDataGeneratorCognitoUser": {
+   "Description": "We saved your Cognito user/password in AWS Secrets",
+   "Value": {
+    "Ref": "KinesisDataGeneratorSecret"
+   }
+  }
+ },
+ "Conditions": {
+  "AwsCdkKinesisEncryptedStreamsUnsupportedRegions": {
+   "Fn::Or": [
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "cn-north-1"
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "cn-northwest-1"
+     ]
+    }
+   ]
+  },
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ }
+}
