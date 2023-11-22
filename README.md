@@ -45,7 +45,9 @@ npm install
 cdk bootstrap
 ```
 5. Deploy the sample
-```cdk deploy```
+```
+cdk deploy
+```
 
 ### Access Amazon EMR Primary Node
 
