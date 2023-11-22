@@ -95,6 +95,8 @@ pyspark
 
 2. Create Kinesis Source
 
+> Change the endpointURL and region to point to where you deployed the sample
+
 * If you want to create the source with a Standard Consumer (GetRecords)
 ```
    kinesis = spark.readStream.format("aws-kinesis") \
@@ -103,7 +105,7 @@ pyspark
    .option("kinesis.consumerType", "GetRecords") \
    .option("kinesis.endpointUrl", "https://kinesis.us-east-1.amazonaws.com") \
    .option("kinesis.startingposition", "LATEST") \
-   load()
+   .load()
    ```
 
 * For creating a Kinesis Standard Source you need 
@@ -114,6 +116,8 @@ pyspark
   * Kinesis Starting Position: Latest / Trim Horizon / At Timestamp
 
 * If you want to use EFO for the consumer (SubscribeToShard)
+* 
+> Change the endpointURL and region to point to where you deployed the sample
 
 ```
 kinesis_efo = spark \
@@ -135,7 +139,13 @@ kinesis_efo = spark \
 
 3. Let's provide a schema for the records, so we can do some processing.
 ```
+from pyspark.sql.types import *
 from pyspark.sql.functions import *
+
+pythonSchema = StructType() \
+ .add("id", LongType()) \
+ .add("data", StringType()) \
+ .add("date", TimestampType())
 
 events= kinesis \
   .selectExpr("cast (data as STRING) jsonData") \
@@ -158,6 +168,9 @@ events \
 > If you are generating a lot amount of data from the generator, results might take longer to be printed as the EMR Cluster deployed is quite small
 
 #### Kinesis Spark Connector Sink
+
+> Change the endpointURL and region to point to where you deployed the sample
+
 
 5. Create Kinesis Sink
 ```
