@@ -6,6 +6,12 @@ The connector allows us to consume data using:
  - Standard consumers (getRecords)
  - Enhanced Fan Out Consumers (SubscribeToShards)
 
+## Prerequisites
+
+You will need to have 
+- CDK CLI installed
+- AWS Permissions to run CDK Commands and deploy the CloudFormation Template
+
 ## Architecture
 
 ![architecture](./architecture/kds-spark-efo.drawio.png)
@@ -28,7 +34,7 @@ git clone <repository>
 ```
 2. Naviate into the directory
 ```
-cd spark-kinesis-connector-emr-sample/cdk
+cd spark-kinesis-connector-emr-sample/cdk/emr-spark-kinesis
 ```
 3. Download and install the necessary npm modules
 ```
