@@ -567,8 +567,11 @@
    "Properties": {
     "Description": "Secret for the Cognito User for the Kinesis Data Generator",
     "Name": "KinesisDataGeneratorUser",
-    "SecretString": {
-     "Fn::Sub": "{ \"username\": \"kinesis\", \"password\": \"Kinesis123\" }"
+    "GenerateSecretString": {
+     "SecretStringTemplate": "{ \"username\": \"kinesis\" }",
+     "GenerateStringKey": "password",
+     "PasswordLength": 20,
+     "ExcludeCharacters": "\"@/\\"
     }
    },
    "UpdateReplacePolicy": "Delete",
@@ -930,7 +933,9 @@
      "Ref": "AWS::Region"
     },
     "Username": "kinesis",
-    "Password": "Kinesis123",
+    "Password": {
+     "Fn::Sub": "{{resolve:secretsmanager:${KinesisDataGeneratorSecret}:SecretString:password}}"
+    },
     "AuthRoleName": {
      "Ref": "AuthenticatedUserRole"
     },
@@ -1165,16 +1170,8 @@
     "Name": "kinesis-source",
     "RetentionPeriodHours": 24,
     "StreamEncryption": {
-     "Fn::If": [
-      "AwsCdkKinesisEncryptedStreamsUnsupportedRegions",
-      {
-       "Ref": "AWS::NoValue"
-      },
-      {
-       "EncryptionType": "KMS",
-       "KeyId": "alias/aws/kinesis"
-      }
-     ]
+     "EncryptionType": "KMS",
+     "KeyId": "alias/aws/kinesis"
     },
     "StreamModeDetails": {
      "StreamMode": "ON_DEMAND"
@@ -1190,16 +1187,8 @@
     "Name": "kinesis-sink",
     "RetentionPeriodHours": 24,
     "StreamEncryption": {
-     "Fn::If": [
-      "AwsCdkKinesisEncryptedStreamsUnsupportedRegions",
-      {
-       "Ref": "AWS::NoValue"
-      },
-      {
-       "EncryptionType": "KMS",
-       "KeyId": "alias/aws/kinesis"
-      }
-     ]
+     "EncryptionType": "KMS",
+     "KeyId": "alias/aws/kinesis"
     },
     "StreamModeDetails": {
      "StreamMode": "ON_DEMAND"

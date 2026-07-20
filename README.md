@@ -67,8 +67,11 @@ su hadoop
 ### Kinesis Data Generator
 
 1. Go to the stack Outputs and click on the Generator URL
-* User: Kinesis
-* Password: Kinesis123
+* User: `kinesis`
+* Password: auto-generated at deploy time and stored in AWS Secrets Manager. Retrieve it from the `KinesisDataGeneratorUser` secret (the `KinesisDataGeneratorCognitoUser` stack output points to it), e.g.:
+```
+aws secretsmanager get-secret-value --secret-id KinesisDataGeneratorUser --query SecretString --output text
+```
 2. Select the AWS Region where you deployed
 3. Choose the Kinesis Source Stream 
 4. Use the following template to generate events

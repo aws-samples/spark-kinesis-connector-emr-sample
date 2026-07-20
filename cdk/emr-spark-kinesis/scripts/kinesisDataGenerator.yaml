@@ -9,7 +9,12 @@ Metadata:
           default: Cognito User for Kinesis Data Generator
         Parameters:
           - Username
-          - Password
+
+Parameters:
+  Username:
+    Type: String
+    Default: kinesis
+    Description: Username for the Cognito user of the Kinesis Data Generator.
 
 Mappings:
   PrincipalMap:
@@ -19,6 +24,9 @@ Mappings:
       cognito: cognito-identity.amazonaws.com
 
 Resources:
+  # @secure_recommendation: Do not hardcode passwords in templates. Let Secrets
+  # Manager generate a strong random password and reference it via a dynamic
+  # reference so the plaintext never appears in the template or stack events.
   KinesisDataGeneratorSecret:
     Type: "AWS::SecretsManager::Secret"
     DeletionPolicy: Delete
@@ -26,7 +34,11 @@ Resources:
     Properties:
       Name: KinesisDataGeneratorUser
       Description: Secret for the Cognito User for the Kinesis Data Generator
-      SecretString: !Sub '{ "username": "kinesis", "password": "Kinesis123" }'
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{ "username": "${Username}" }'
+        GenerateStringKey: "password"
+        PasswordLength: 20
+        ExcludeCharacters: '"@/\'
 
   StagingLambdaRole:
     Type: "AWS::IAM::Role"
@@ -216,8 +228,8 @@ Resources:
     Properties:
       ServiceToken: !GetAtt DataGenCognitoSetupLambdaFunc.Arn
       Region: !Ref "AWS::Region"
-      Username: "kinesis"
-      Password: "Kinesis123"
+      Username: !Ref Username
+      Password: !Sub "{{resolve:secretsmanager:${KinesisDataGeneratorSecret}:SecretString:password}}"
       AuthRoleName: !Ref AuthenticatedUserRole
       AuthRoleArn: !GetAtt AuthenticatedUserRole.Arn
       UnauthRoleName: !Ref UnauthenticatedUserRole
