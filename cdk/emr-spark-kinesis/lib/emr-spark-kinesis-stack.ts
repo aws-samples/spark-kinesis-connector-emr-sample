@@ -5,6 +5,7 @@ import * as emr from 'aws-cdk-lib/aws-emr';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as path from "path";
 import * as kinesis from 'aws-cdk-lib/aws-kinesis';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import * as cfninc from 'aws-cdk-lib/cloudformation-include';
 import {NagSuppressions} from "cdk-nag";
 
@@ -39,14 +40,26 @@ export class EmrSparkKinesisStack extends cdk.Stack {
       },
     ]);
 
+    // @secure_recommendation: Kinesis Data Streams must be encrypted with KMS
+    // (not UNENCRYPTED). Prefer a customer-managed KMS key over the AWS-managed
+    // alias/aws/kinesis key so encryption is enforced in all regions.
+    const kinesisStreamKey = new kms.Key(this, 'Kinesis Stream Key', {
+      description: 'Customer-managed KMS key for the Spark/Kinesis source and sink streams',
+      enableKeyRotation: true,
+    });
+
     const kinesisSourceStream = new kinesis.Stream(this, 'Kinesis Spark Source Stream', {
       streamName: 'kinesis-source',
-      streamMode: kinesis.StreamMode.ON_DEMAND
+      streamMode: kinesis.StreamMode.ON_DEMAND,
+      encryption: kinesis.StreamEncryption.KMS,
+      encryptionKey: kinesisStreamKey,
     })
 
     const kinesisSinkStream = new kinesis.Stream(this, 'Kinesis Spark Sink Stream', {
       streamName: 'kinesis-sink',
-      streamMode: kinesis.StreamMode.ON_DEMAND
+      streamMode: kinesis.StreamMode.ON_DEMAND,
+      encryption: kinesis.StreamEncryption.KMS,
+      encryptionKey: kinesisStreamKey,
     })
 
     // our KDA app needs to be able to log
@@ -97,6 +110,18 @@ export class EmrSparkKinesisStack extends cdk.Stack {
         reason: 'Need to use SSM Managed Roles for being able to use Session Manager'
       },
     ]);
+
+    // The EMR EC2 instances read/write the KMS-encrypted streams, so the job
+    // flow role must be able to use the customer-managed key.
+    kinesisStreamKey.grantEncryptDecrypt(emrJobFlowRole);
+
+    NagSuppressions.addResourceSuppressions(emrJobFlowRole, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason: 'grantEncryptDecrypt emits the standard KMS wildcard actions (kms:GenerateDataKey*, kms:ReEncrypt*) scoped to the single customer-managed Kinesis stream key; required for the EMR instances to encrypt/decrypt stream records.',
+        appliesTo: ['Action::kms:GenerateDataKey*', 'Action::kms:ReEncrypt*'],
+      },
+    ], true);
 
     const emrInstanceProfile = new iam.CfnInstanceProfile(this, 'EMR InstanceProfile', {
       instanceProfileName: 'emr-instance-profile-spark-kinesis',
